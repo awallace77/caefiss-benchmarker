@@ -1,4 +1,4 @@
-export const getCurrentLocale = () => {
+export const getCurrentLocale: () => "en" | "fr" = () => {
   let lang;
   if (navigator.languages && navigator.languages.length) {
     lang = navigator.languages[0];

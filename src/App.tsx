@@ -10,6 +10,7 @@ import {
   type AlertColor,
   type AlertType,
 } from "./types/AlertType";
+import LocaleSwitch from "./components/LocaleSwitch";
 
 type JSONValue =
   | string
@@ -21,22 +22,27 @@ type JSONValue =
 
 function App() {
   const [trs, setTrs] = useState<TranslationsType>();
-  const [locale] = useState(getCurrentLocale());
+  const [locale, setLocale] = useState(getCurrentLocale());
   const [alerts, setAlerts] = useState<AlertType[]>([]);
-  // const trs: TranslationsType = tr[locale];
-  const [jsonFile, setJsonFile] = useState<JSONValue | null>(null);
+  const [jsonFile, setJsonFile] = useState<JSONValue | null | undefined>(null);
   const [image, setImage] = useState<string | null>(null);
+  const requestUrl = "https://caefiss-benchmarker-backend.vercel.app";
 
   useEffect(() => {
     const loadTranslations = async () => {
       const res = await fetch("/tr/tr.json");
       const data = await res.json();
       setTrs(data[locale]);
+      document.documentElement.lang = locale;
     };
     loadTranslations();
   }, [locale]);
 
   if (!trs) return <div className="w-full">Loading...</div>;
+
+  function switchLocale() {
+    setLocale(locale === "en" ? "fr" : "en");
+  }
 
   /**
    * Handles file input change
@@ -53,10 +59,11 @@ function App() {
     // JSON only
     if (file.type !== "application/json") {
       handleAlert(
-        ALERT_PRESETS.danger.color,
-        ALERT_PRESETS.danger.bgColor,
-        "Invalid file format. Please use JSON"
+        ALERT_PRESETS.warning.color,
+        ALERT_PRESETS.warning.bgColor,
+        trs!["warning"]["fileType"]
       );
+      setJsonFile(undefined);
       return;
     } else {
       try {
@@ -74,7 +81,7 @@ function App() {
         handleAlert(
           ALERT_PRESETS.danger.color,
           ALERT_PRESETS.danger.bgColor,
-          "Something went wrong"
+          trs!["errors"]["error"]
         );
       }
     }
@@ -144,6 +151,18 @@ function App() {
     }, 3000);
   }
 
+  function showAlert(color: AlertColor, bgColor: AlertColor, message: string) {
+    const id = Date.now(); // Unique ID for this specific alert
+    const newAlert = { id, color, bgColor, message };
+    setAlerts((prev) => [...prev, newAlert]);
+
+    return id;
+  }
+
+  function hideAlert(id: number) {
+    setAlerts((prev) => prev.filter((alert) => alert.id !== id));
+  }
+
   /**
    * Notifies the user of the download
    */
@@ -167,7 +186,7 @@ function App() {
   ) {
     event.preventDefault();
     event.stopPropagation();
-    if (!jsonFile) {
+    if (jsonFile === null) {
       handleAlert(
         ALERT_PRESETS.danger.color,
         ALERT_PRESETS.danger.bgColor,
@@ -175,9 +194,24 @@ function App() {
       );
 
       return;
+    } else if (jsonFile === undefined) {
+      handleAlert(
+        ALERT_PRESETS.warning.color,
+        ALERT_PRESETS.warning.bgColor,
+        trs!["warning"]["fileType"]
+      );
+      return;
     }
 
-    createImage(jsonFile, requestUrl);
+    const alertId = showAlert(
+      ALERT_PRESETS.info.color,
+      ALERT_PRESETS.info.bgColor,
+      trs!["info"]["generated"]
+    );
+
+    createImage(jsonFile, requestUrl).then(() => {
+      hideAlert(alertId);
+    });
   }
 
   return (
@@ -187,11 +221,21 @@ function App() {
         className="flex flex-col w-full h-screen p-5 gap-10"
       >
         <div
+          id="locale-switch-container"
+          className="w-full flex justify-center"
+        >
+          <LocaleSwitch
+            label={trs["general"]["switchLocale"]}
+            onSwitch={switchLocale}
+          />
+        </div>
+        <div
           id="header-container"
           className="w-full flex flex-col gap-2 justify-center "
         >
           <Header
             title={trs["general"]["title"]}
+            subtitle={trs["general"]["subtitle"]}
             desc={trs["general"]["desc"]}
           />
         </div>
@@ -223,7 +267,7 @@ function App() {
             imageName={trs["generatorTypes"]["storyPointsImgName"]}
             onDownloadImage={handleDownloadImage}
             onGenerateImage={handleGenerateImage}
-            requestUrl="https://caefiss-benchmarker-backend.vercel.app/generate_chart"
+            requestUrl={`${requestUrl}/generate_chart`}
             trs={trs}
           />
         </div>

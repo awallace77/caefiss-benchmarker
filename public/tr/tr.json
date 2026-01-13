@@ -1,18 +1,20 @@
 {
   "en": {
     "general": {
-      "title": "CAEFISS 2.0 Benchmarker",
-      "desc": "This is a tool built for CAEFISS2.0 to upload an audit log JSON file. You can generate visual metrics based on your chosen type.",
+      "title": "CAEFISS 2.0 🇨🇦 ",
+      "subtitle": "Development Benchmarker",
+      "desc": "Upload your audit log JSON file and generate your choice of visual metrics.",
       "fileInputLabel": "Choose file",
       "addFileLabel": "Upload",
       "fileInputPlaceholder": "Choose file ...",
       "fileUpload": "Uploading file",
-      "fileUploadError": "Error uploading file"
+      "fileUploadError": "Error uploading file",
+      "switchLocale": "Français"
     },
 
     "generatorTypes": {
       "storyPoints": "Story Point Benchmarks",
-      "storyPointsDesc": "Generate a graph that shows your ticket performance based on story points and their expected benchmark",
+      "storyPointsDesc": "Generate a chart that shows your ticket performance based on story points and their expected benchmark.",
       "storyPointsImgAlt": "Graph based on story points",
       "storyPointsImgName": "story_points_benchmarks"
     },
@@ -31,7 +33,8 @@
       "upload": "There was an error uploading the file",
       "generated": "There was an error generating the image",
       "download": "There was an error downloading the image",
-      "noFile": "No file provided"
+      "noFile": "No file provided",
+      "error": "Something went wrong"
     },
 
     "info": {
@@ -45,5 +48,53 @@
       "downloadImage": "Download Image"
     }
   },
-  "fr": {}
+  "fr": {
+    "general": {
+      "title": "CAEFISS 2.0 🇨🇦",
+      "subtitle": "Outil de benchmarking de développement",
+      "desc": "Téléversez votre fichier JSON de journal d'audit et générez les indicateurs visuels de votre choix.",
+      "fileInputLabel": "Choisir un fichier",
+      "addFileLabel": "Téléverser",
+      "fileInputPlaceholder": "Choisir un fichier ...",
+      "fileUpload": "Téléversement du fichier",
+      "fileUploadError": "Erreur lors du téléversement du fichier",
+      "switchLocale": "English"
+    },
+
+    "generatorTypes": {
+      "storyPoints": "Indicateurs de points d'histoire",
+      "storyPointsDesc": "Générer un graphique montrant la performance de vos billets selon les points d'histoire et les seuils de référence attendus",
+      "storyPointsImgAlt": "Graphique basé sur les points d'histoire",
+      "storyPointsImgName": "indicateurs_points_histoire"
+    },
+
+    "success": {
+      "upload": "Fichier téléversé avec succès",
+      "generated": "Image générée avec succès",
+      "download": "Image téléchargée avec succès"
+    },
+
+    "warning": {
+      "fileType": "Type de fichier incorrect, veuillez utiliser un fichier JSON"
+    },
+
+    "errors": {
+      "upload": "Une erreur est survenue lors du téléversement du fichier",
+      "generated": "Une erreur est survenue lors de la génération de l'image",
+      "download": "Une erreur est survenue lors du téléchargement de l'image",
+      "noFile": "Aucun fichier fourni",
+      "error": "Une erreur est survenue"
+    },
+
+    "info": {
+      "upload": "Téléversement du fichier",
+      "generated": "Génération de l'image",
+      "download": "Téléchargement de l'image"
+    },
+
+    "actions": {
+      "generateImage": "Générer l'image",
+      "downloadImage": "Télécharger l'image"
+    }
+  }
 }
