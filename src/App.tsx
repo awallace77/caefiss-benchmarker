@@ -223,7 +223,7 @@ function App() {
             imageName={trs["generatorTypes"]["storyPointsImgName"]}
             onDownloadImage={handleDownloadImage}
             onGenerateImage={handleGenerateImage}
-            requestUrl="http://localhost:3000/generate_chart"
+            requestUrl="https://caefiss-benchmarker-backend.vercel.app/generate_chart"
             trs={trs}
           />
         </div>
