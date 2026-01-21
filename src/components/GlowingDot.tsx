@@ -22,7 +22,12 @@ function GlowingDot({
 }) {
   return (
     <motion.div
-      className={`w-${dotWidth} h-${dotWidth} rounded-full ${dotColor} shadow-[0_0_20px_${dotShadow}] hover:cursor-pointer`}
+      className={`rounded-full ${dotColor} shadow-[0_0_20px_${dotShadow}] hover:cursor-pointer`}
+      style={{
+        width: `${dotWidth * 4}px`, // Tailwind 'w-5' is actually 20px (5 * 4)
+        height: `${dotWidth * 4}px`,
+        boxShadow: `0 0 20px ${dotShadow}`, // This allows for dynamic shadow colors too!
+      }}
       animate={{ y: [0, signY * dy, 0], x: [0, signX * dx, 0] }}
       transition={{
         duration: duration,
