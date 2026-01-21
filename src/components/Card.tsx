@@ -1,5 +1,6 @@
-import type { MouseEvent } from "react";
-import type { TranslationsType } from "../types/TranslationsType";
+import { useState, type MouseEvent } from "react";
+import GlowingDot from "./GlowingDot";
+import { useTranslation } from "react-i18next";
 
 function Card({
   title,
@@ -8,7 +9,6 @@ function Card({
   imageName,
   imageAlt,
   requestUrl,
-  trs,
   onGenerateImage,
   onDownloadImage,
 }: {
@@ -18,33 +18,60 @@ function Card({
   imageName: string;
   imageAlt: string;
   requestUrl: string;
-  trs: TranslationsType;
   onGenerateImage: (
     event: MouseEvent<HTMLDivElement> | MouseEvent<HTMLButtonElement>,
-    requestUrl: string
+    requestUrl: string,
   ) => void;
   onDownloadImage: (event: MouseEvent<HTMLAnchorElement>) => void;
 }) {
+  const [dx] = useState(() => Math.floor(Math.random() * 10) + 2);
+  const [dy] = useState(() => Math.floor(Math.random() * 2) + 2);
+  const [duration] = useState(() => Math.floor(Math.random() * 2 + 2));
+  const [textColor, setTextColor] = useState("text-(--coolor-blue-light)");
+  const [width] = useState(() => 5);
+  const signX = 1;
+  const signY = -1;
+  const color = "bg-cyan-400";
+  const shadow = "#00f5ff";
+
+  const { t } = useTranslation();
+
+  function handleDotClick() {
+    setTextColor(
+      textColor === "text-(--coolor-blue-light)"
+        ? "text-cyan-400"
+        : "text-(--coolor-blue-light)",
+    );
+    return;
+  }
+
   return (
     <>
       <div
-        className="
+        className={`
             w-100 h-full p-5
             flex flex-col gap-5 justify-evenly
             rounded-xl 
-            cursor-pointer
-            bg-(--coolor-black) 
-            text-md text-(--coolor-blue-light)
+            text-md ${textColor} 
             shadow-[0_0_15px_rgba(0,0,0,0.4)]
-            hover-glow
-        "
+        `}
         title={title}
-        onClick={(event: MouseEvent<HTMLDivElement>) =>
-          onGenerateImage(event, requestUrl)
-        }
       >
-        <h2 className="text-lg">{title}</h2>
-        <p className="text-sm text-gray-200">{desc}</p>
+        <div className="flex gap-5">
+          <h2 className="text-lg">{title}</h2>
+          <GlowingDot
+            dotWidth={width}
+            dotColor={color}
+            dotShadow={shadow}
+            dx={dx}
+            dy={dy}
+            duration={duration}
+            signX={signX}
+            signY={signY}
+            onDotClick={handleDotClick}
+          />
+        </div>
+        <p className={`text-sm ${textColor}`}>{desc}</p>
         <button
           onClick={(event: MouseEvent<HTMLButtonElement>) =>
             onGenerateImage(event, requestUrl)
@@ -59,7 +86,7 @@ function Card({
             cursor-pointer
             "
         >
-          {trs["actions"]["generateImage"]}
+          {t("actions.generateImage")}
         </button>
         {image && (
           <div className="flex flex-col gap-5">
@@ -80,7 +107,7 @@ function Card({
                 cursor-pointer
               "
             >
-              {trs["actions"]["downloadImage"]}
+              {t("actions.downloadImage")}
             </a>
           </div>
         )}

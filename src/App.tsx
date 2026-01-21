@@ -1,10 +1,9 @@
-import { useEffect, useState, type ChangeEvent, type MouseEvent } from "react";
+import { useState, type ChangeEvent, type MouseEvent } from "react";
 import Header from "./components/Header";
 import FileInput from "./components/FileInput";
 import Card from "./components/Card";
 import Alert from "./components/Alert";
-import { getCurrentLocale } from "./utils/utils";
-import type { TranslationsType } from "./types/TranslationsType";
+import { useTranslation } from "react-i18next";
 import {
   ALERT_PRESETS,
   type AlertColor,
@@ -21,28 +20,13 @@ type JSONValue =
   | Array<JSONValue>;
 
 function App() {
-  const [trs, setTrs] = useState<TranslationsType>();
-  const [locale, setLocale] = useState(getCurrentLocale());
   const [alerts, setAlerts] = useState<AlertType[]>([]);
   const [jsonFile, setJsonFile] = useState<JSONValue | null | undefined>(null);
   const [image, setImage] = useState<string | null>(null);
   const requestUrl = "https://caefiss-benchmarker-backend.vercel.app";
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    const loadTranslations = async () => {
-      const res = await fetch("/tr/tr.json");
-      const data = await res.json();
-      setTrs(data[locale]);
-      document.documentElement.lang = locale;
-    };
-    loadTranslations();
-  }, [locale]);
-
-  if (!trs) return <div className="w-full">Loading...</div>;
-
-  function switchLocale() {
-    setLocale(locale === "en" ? "fr" : "en");
-  }
+  if (!t) return <div className="w-full">Loading...</div>;
 
   /**
    * Handles file input change
@@ -61,7 +45,7 @@ function App() {
       handleAlert(
         ALERT_PRESETS.warning.color,
         ALERT_PRESETS.warning.bgColor,
-        trs!["warning"]["fileType"]
+        t("warning.fileType"),
       );
       setJsonFile(undefined);
       return;
@@ -74,14 +58,14 @@ function App() {
         handleAlert(
           ALERT_PRESETS.success.color,
           ALERT_PRESETS.success.bgColor,
-          trs!["success"]["upload"]
+          t("success.upload"),
         );
       } catch (err: unknown) {
         console.error(err);
         handleAlert(
           ALERT_PRESETS.danger.color,
           ALERT_PRESETS.danger.bgColor,
-          trs!["errors"]["error"]
+          t("errors.error"),
         );
       }
     }
@@ -113,14 +97,14 @@ function App() {
       handleAlert(
         ALERT_PRESETS.success.color,
         ALERT_PRESETS.success.bgColor,
-        "Successfully generated image"
+        t("success.generated"),
       );
     } catch (err: unknown) {
       console.error(err);
       handleAlert(
         ALERT_PRESETS.danger.color,
         ALERT_PRESETS.danger.bgColor,
-        "Something went wrong"
+        t("errors.error"),
       );
       throw new Error("Error creating image");
     }
@@ -136,7 +120,7 @@ function App() {
   function handleAlert(
     color: AlertColor,
     bgColor: AlertColor,
-    message: string
+    message: string,
   ) {
     const id = Date.now(); // Unique ID for this specific alert
 
@@ -172,7 +156,7 @@ function App() {
     handleAlert(
       ALERT_PRESETS.info.color,
       ALERT_PRESETS.info.bgColor,
-      trs!["info"]["download"]
+      t("info.download"),
     );
   }
 
@@ -182,7 +166,7 @@ function App() {
    */
   function handleGenerateImage(
     event: MouseEvent<HTMLDivElement> | MouseEvent<HTMLButtonElement>,
-    requestUrl: string
+    requestUrl: string,
   ) {
     event.preventDefault();
     event.stopPropagation();
@@ -190,7 +174,7 @@ function App() {
       handleAlert(
         ALERT_PRESETS.danger.color,
         ALERT_PRESETS.danger.bgColor,
-        trs!["errors"]["noFile"]
+        t("errors.noFile"),
       );
 
       return;
@@ -198,7 +182,7 @@ function App() {
       handleAlert(
         ALERT_PRESETS.warning.color,
         ALERT_PRESETS.warning.bgColor,
-        trs!["warning"]["fileType"]
+        t("warning.fileType"),
       );
       return;
     }
@@ -206,7 +190,7 @@ function App() {
     const alertId = showAlert(
       ALERT_PRESETS.info.color,
       ALERT_PRESETS.info.bgColor,
-      trs!["info"]["generated"]
+      t("info.generated"),
     );
 
     createImage(jsonFile, requestUrl).then(() => {
@@ -224,20 +208,13 @@ function App() {
           id="locale-switch-container"
           className="w-full flex justify-center"
         >
-          <LocaleSwitch
-            label={trs["general"]["switchLocale"]}
-            onSwitch={switchLocale}
-          />
+          <LocaleSwitch />
         </div>
         <div
           id="header-container"
-          className="w-full flex flex-col gap-2 justify-center "
+          className="w-full flex flex-col gap-3 justify-center"
         >
-          <Header
-            title={trs["general"]["title"]}
-            subtitle={trs["general"]["subtitle"]}
-            desc={trs["general"]["desc"]}
-          />
+          <Header />
         </div>
         <div
           id="input-container"
@@ -246,8 +223,8 @@ function App() {
           <div className="w-100">
             <FileInput
               id="file-input"
-              accessibleLabel={trs["general"]["fileInputLabel"]}
-              label={trs["general"]["fileInputLabel"]}
+              accessibleLabel={t("general.fileInputLabel")}
+              label={t("general.fileInputLabel")}
               type="file"
               key="file-input"
               onChange={handleFileChange}
@@ -260,15 +237,14 @@ function App() {
           className="flex flex-row gap-5 w-full justify-center"
         >
           <Card
-            title={trs["generatorTypes"]["storyPoints"]}
-            desc={trs["generatorTypes"]["storyPointsDesc"]}
-            imageAlt={trs["generatorTypes"]["storyPointsImgAlt"]}
+            title={t("generatorTypes.storyPoints")}
+            desc={t("generatorTypes.storyPointsDesc")}
+            imageAlt={t("generatorTypes.storyPointsImgAlt")}
             image={image}
-            imageName={trs["generatorTypes"]["storyPointsImgName"]}
+            imageName={t("generatorTypes.storyPointsImgName")}
             onDownloadImage={handleDownloadImage}
             onGenerateImage={handleGenerateImage}
             requestUrl={`${requestUrl}/generate_chart`}
-            trs={trs}
           />
         </div>
         <div className="alert-container w-full flex flex-col justify-center items-center">
